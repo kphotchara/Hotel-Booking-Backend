@@ -27,20 +27,32 @@ const HotelSchema = new mongoose.Schema({
     },
     tel:{
         type: String
+    },
+    rating:{
+        type:Number,
+        default:0
     }
 },{
+    id:false,
     toJSON:{virtuals:true},
     toObject:{virtuals:true}
 });
 
-// HotelSchema.pre('deleteOne',{document:true,query:false},async function(next){
-//     console.log(`booking Being removed from hotel ${this._id}`);
-//     await this.model('Booking').deleteMany({booking:this._id});
-//     next();
-// });
+HotelSchema.pre('deleteOne',{document:true,query:false},async function(next){
+    console.log(`booking and review Being removed from hotel ${this._id}`);
+    await this.model('Booking').deleteMany({booking:this._id});
+    await this.model('Review').deleteMany({hotel:this._id});
+    next();
+});
 
 HotelSchema.virtual('booking',{
     ref:'Booking',
+    localField:'_id',
+    foreignField:'hotel',
+    justOne:false
+});
+HotelSchema.virtual('review',{
+    ref:'Review',
     localField:'_id',
     foreignField:'hotel',
     justOne:false

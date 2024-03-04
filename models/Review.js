@@ -1,4 +1,3 @@
-
 const mongoose=require('mongoose');
 const Hotel = require('./Hotel');
 
@@ -65,7 +64,9 @@ ReviewSchema.pre('deleteOne', async function () {
         { $group: { _id: null, avgRating: { $avg: '$rating' } } }
     ]);
     const countDocuments = await this.model.countDocuments({ hotel: doc.hotel });
-    let newRating = (((avgRating[0].avgRating)*countDocuments )-doc.rating)/(countDocuments-1);
+    let newRating;
+    if(countDocuments-1==0)newRating=0;
+    else newRating = (((avgRating[0].avgRating)*countDocuments )-doc.rating)/(countDocuments-1);
     // console.log("fff");
     // console.log(doc.rating);
     // console.log(countDocuments);

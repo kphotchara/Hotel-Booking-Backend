@@ -1,19 +1,16 @@
-
 const Booking=require('../models/Booking');
 const Hotel=require('../models/Hotel');
-
 
 //@desc     Get all appointments
 //@route    GET /api/v1/appointments
 //@access   Public
-
 exports.getAllBooking=async (req,res,next)=>{
     let query;
     //Generalusers can see only their appointments
     if(req.user.role!=='admin'){
         query=Booking.find({user:req.user.id}).populate({
             path:'hotel',
-            select:'name address tel'
+            select:'name tel'
         });
     }
     else{ //admin
@@ -21,13 +18,13 @@ exports.getAllBooking=async (req,res,next)=>{
             console.log(req.params.hotelId);
             query=Booking.find({hotel:req.params.hotelId}).populate({
                 path:'hotel',
-                select:'name address tel'
+                select:'name tel'
             });
         }
         else{
             query=Booking.find().populate({
                 path:'hotel',
-                select:'name address tel'
+                select:'name tel'
 
             });
         }
@@ -49,12 +46,11 @@ exports.getAllBooking=async (req,res,next)=>{
 //@desc     Get single appointment
 //@route    GET /api/v1/appointments/:id
 //@access   Public
-
 exports.getBooking=async (req,res,next)=>{
     try{
         const booking=await Booking.findById(req.params.id).populate({
             path:'hotel',
-            select:'name address tel'
+            select:'name tel'
         });
 
         if(!booking){
@@ -77,7 +73,6 @@ exports.getBooking=async (req,res,next)=>{
 //@desc     Add appointment
 //@route    POST /api/v1/hospitals/:hospitalId/appointments/
 //@access   Private
-
 exports.addBooking=async(req,res,next)=>{
     try{
         console.log(req.body);
@@ -141,7 +136,6 @@ exports.updateBooking=async(req,res,next)=>{
 //@desc     Delete appointment
 //@route    DELETE /api/v1/appointments/:id
 //@access   Private
-
 exports.deleteBooking=async(req,res,nex)=>{
     try{
             const booking=await Booking.findById(req.params.id);

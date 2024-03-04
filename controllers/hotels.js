@@ -1,6 +1,4 @@
-
 const Hotel = require('../models/Hotel');
-
 
 exports.getHotels=async(req,res,next) => {
 
@@ -19,9 +17,10 @@ exports.getHotels=async(req,res,next) => {
         queryStr=queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g,match=>`$${match}`);
         
 
-        query = Hotel.find(JSON.parse(queryStr))
-        //query = Hotel.find(JSON.parse(queryStr)).populate('booking');
-
+        query = Hotel.find(JSON.parse(queryStr)).populate({
+            path:'review',
+            select:'-_id -hotel rating description'
+        });
         
         //console.log(req.query);
         
@@ -49,7 +48,7 @@ exports.getHotels=async(req,res,next) => {
 
     try{
 
-        const total=await Hotel.countDocuments();
+        const total=await Hotel.countDocuments(query);
         query=query.skip(startIndex).limit(limit);
 
         const hotels = await query;
@@ -74,26 +73,6 @@ exports.getHotels=async(req,res,next) => {
     }
 
 };
-exports.getHotel=async(req,res,next) => {
-    try{
-        //const hotel = await Hotel.findById(req.params.id).populate('booking');
-        const hotel = await Hotel.findById(req.params.id);
-        if(!hotel){
-            res.status(400).json({success:false});
-        }
-        res.status(200).json({
-            success:true,
-            data:hotel,
-            count:hotels.length,
-            pagination,
-            data:hotels
-        });
-    } catch(err){
-        res.status(400).json({success:false});
-    }
-
-};
-
 //@desc     Get a hotel
 //@route    GET /api/v1/hotels/:id
 //@access   Public
@@ -101,9 +80,10 @@ exports.getHotel=async(req,res,next) => {
     try{
         //const hotel = await Hotel.findById(req.params.id).populate('booking');
         const hotel = await Hotel.findById(req.params.id).populate({
-            path:'reviews',
+            path:'review',
             select:'-_id -hotel rating description'
         });
+        console.log(hotel);
         if(!hotel){
             res.status(400).json({success:false});
         }
