@@ -28,18 +28,19 @@ const HospitalSchema = new mongoose.Schema({
     tel:{
         type: String
     },
-    region:{
-        type: String,
-        required: [true,'Please add a regoin']
+    rating:{
+        type: Number,
+        default: 0
     }
 },{
+    id:false,
     toJSON:{virtuals:true},
     toObject:{virtuals:true}
 });
 
-HospitalSchema.pre('deleteOne',{document:true,query:false},async function(next){
-    console.log(`Appointment Being removed from hospital ${this._id}`);
-    await this.model('Appointment').deleteMany({hospital:this._id});
+HotelSchema.pre('deleteOne',{document:true,query:false},async function(next){
+    console.log(`booking Being removed from hotel ${this._id}`);
+    await this.model('Booking').deleteMany({booking:this._id});
     next();
 });
 
@@ -49,4 +50,18 @@ HospitalSchema.virtual('appointments',{
     foreignField:'hospital',
     justOne:false
 });
-module.exports=mongoose.model('Hospital',HospitalSchema);
+
+HotelSchema.pre('deleteOne',{document:true,query:false},async function(next){
+    console.log(`review being removed from hotel ${this._id}`);
+    await this.model('Review').deleteMany({hotel:this._id});
+    next();
+});
+
+HotelSchema.virtual('reviews',{
+    ref:'Review',
+    localField:'_id',
+    foreignField:'hotel',
+    justOne:false
+});
+
+module.exports=mongoose.model('Hotel',HotelSchema);

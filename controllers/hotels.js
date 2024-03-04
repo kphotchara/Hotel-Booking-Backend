@@ -1,20 +1,23 @@
-const Hospital = require('../models/Hospital');
-const vacCenter = require('../models/VacCenter');
+const Hospital = require('../models/Hotels');
 
-exports.getHospitals=async(req,res,next) => {
-    //res.status(200).json({success:true,msg:'Show all hospital'});
-    let query
+//@desc     Get all hotels
+//@route    GET /api/v1/hotels
+//@access   Public
+exports.getHotels=async(req,res,next) => {
+
+        let query
         const reqQuery = {...req.query};
 
         const removeFields = ['select','sort','page','limit'];
         removeFields.forEach(param=>delete reqQuery[param]);
         
-        console.log(reqQuery);
+        //console.log(reqQuery);
 
         let queryStr = JSON.stringify(reqQuery);
         queryStr=queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g,match=>`$${match}`);
         
-        query = Hospital.find(JSON.parse(queryStr)).populate('appointments');
+        query = Hotel.find(JSON.parse(queryStr))
+        //query = Hotel.find(JSON.parse(queryStr)).populate('booking');
         
         //console.log(req.query);
         
@@ -23,14 +26,14 @@ exports.getHospitals=async(req,res,next) => {
             const fields=req.query.select.split(',').join(' ');
             query=query.select(fields);
         }
-    
+        
         //Sort
         if(req.query.sort){
             const sortBy=req.query.sort.split(',').join(' ');
             query=query.sort(sortBy);
         }
         else{
-            query=query.sort('-createdAt');
+            query=query.sort({ rating: -1 });
         }
         const page=parseInt(req.query.page,10) || 1;
         const limit=parseInt(req.query.limit,10) || 25;
@@ -39,7 +42,7 @@ exports.getHospitals=async(req,res,next) => {
         
 
     try{
-        const total=await Hospital.countDocuments();
+        const total = await Hotel.countDocuments(JSON.parse(queryStr));
         query=query.skip(startIndex).limit(limit);
 
         const hospitals = await query;
@@ -62,12 +65,18 @@ exports.getHospitals=async(req,res,next) => {
     }
 
 };
-exports.getHospital=async(req,res,next) => {
-    //res.status(200).json({success:true,msg:`Show hospital ${req.params.id}`});
 
+//@desc     Get a hotel
+//@route    GET /api/v1/hotels/:id
+//@access   Public
+exports.getHotel=async(req,res,next) => {
     try{
-        const hospital = await Hospital.findById(req.params.id).populate('appointments');;
-        if(!hospital){
+        //const hotel = await Hotel.findById(req.params.id).populate('booking');
+        const hotel = await Hotel.findById(req.params.id).populate({
+            path:'reviews',
+            select:'-_id -hotel rating description'
+        });
+        if(!hotel){
             res.status(400).json({success:false});
         }
 
@@ -80,7 +89,11 @@ exports.getHospital=async(req,res,next) => {
     }
 
 };
-exports.createHospital=async(req,res,next) => {
+
+//@desc     create a hotel
+//@route    POST /api/v1/hotels/
+//@access   Private
+exports.createHotel=async(req,res,next) => {
     //console.log(req.body);
     // res.status(200).json({success:true,msg:'Create new hospitals'});
     const hospital =await Hospital.create(req.body);
@@ -91,8 +104,11 @@ exports.createHospital=async(req,res,next) => {
     
 };
 
-exports.updateHospital=async(req,res,next) => {
-    //res.status(200).json({success:true,msg:`Update hospital ${req.params.id}`});
+//@desc     update a hotel
+//@route    PUT /api/v1/hotels/:id
+//@access   Private
+exports.updateHotel=async(req,res,next) => {
+
     try{
         const hospital = await Hospital.findByIdAndUpdate(req.params.id,req.body,{
             new : true,
@@ -111,8 +127,10 @@ exports.updateHospital=async(req,res,next) => {
     }
 };
 
-
-exports.deleteHospital=async(req,res,next)=>{
+//@desc     delete a hotel
+//@route    DELETE /api/v1/hotels/:id
+//@access   Private
+exports.deleteHotel=async(req,res,next)=>{
     try{
         const hospital=await Hospital.findById(req.params.id);
 
