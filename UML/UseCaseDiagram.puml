@@ -1,0 +1,33 @@
+@startuml Hotel Booking Diagram
+left to right direction
+
+actor "User" as user
+actor "Admin" as admin
+
+rectangle "Hotel Booking System" as HotelBookingSystem{
+
+    usecase "Register" as register
+    usecase "Login" as login
+    usecase "Logout" as logout
+    usecase "View\nHotels" as viewHotels
+    usecase "Manage\nHotels" as manageHotels
+    usecase "View\nBookings" as viewBookings
+    usecase "Manage\nBookings" as manageBookings
+}
+
+user -- register
+user -- login
+user -- logout
+user -- viewHotels
+user -- viewBookings
+
+register -- admin
+login -- admin
+logout-- admin
+viewHotels -- admin
+viewBookings -- admin
+manageHotels -- admin
+manageBookings -- admin
+
+
+@enduml

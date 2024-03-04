@@ -1,0 +1,81 @@
+@startuml User Class Diagram
+left to right direction
+package "Booking Hotel"{
+
+    class "<<Application>>\nBooking Hotel Service" as BookingHotelService{}
+
+    class "<<Resource>>\nHotels" as ResourceHotels{
+        <<GET>> +getHotels():Hotel
+        <<POST>> +createHotel():Hotel
+    }
+
+    class "<<Resource>>\nHotel" as ResourceHotel {
+        <<GET>> +getHotel(): Hotel
+        <<PUT>> +updateHotel(): Hotel
+        <<DELETE>> +deleteHotel(): void
+    }
+
+    class "<<Representation>>\nHotel" as RepresentationHotel {
+        -String name
+        -String address
+        -String district
+        -String province
+        -String postalcode
+        -String tel
+        -Number rating
+    }
+
+
+
+    class "<<Resource>>\nAuthentication" as resourceauth{
+        <<POST>> +register():User
+        <<POST>> +login():User
+        <<GET>> +getMe():User
+        <<DELETE>> +logout():void
+    }
+
+    class "<<Representation>>\nAuthentication" as representationauth {
+        -String username 
+        -String name
+        -String telephone
+        -String email
+        -String role 
+        -String password
+    }
+
+    class "<<Resource>>\nBookings" as ResourceBookings{
+            <<GET>> +getAllBooking():Booking
+            <<POST>> +addBooking():Booking
+        }
+
+        class "<<Resource>>\nBooking" as ResourceBooking {
+            <<GET>> +getBooking():Booking
+            <<PUT>> +updateBooking():Booking
+            <<DELETE>> +deleteBooking():void
+        }
+
+        class "<<Representation>>\nBooking" as RepresentationBooking {
+            -Date apptDate
+            -mongoose.Schema.ObjectID user
+            -mongoose.Schema.ObjectID hotel
+            -Date createdAt
+        }
+}
+
+
+BookingHotelService ..> ResourceHotels:"/hotels\n<<Path>>"
+ResourceHotels ..> ResourceHotel: "/{hotelId}\n<<Path>>"
+ResourceHotel ..> RepresentationHotel: "<<use>>"
+ResourceHotel ..> ResourceBookings:"/bookings\n<<Path>>"
+
+BookingHotelService ..> resourceauth:"/auth/register\n<<Path>>"
+BookingHotelService ..> resourceauth:"/auth/login\n<<Path>>"
+BookingHotelService ..> resourceauth:"/auth/me\n<<Path>>"
+BookingHotelService ..> resourceauth:"/auth/logout\n<<Path>>"
+resourceauth ..> representationauth: "<<use>>"
+
+BookingHotelService ..> ResourceBookings:"/bookings\n<<Path>>"
+ResourceBookings ..> ResourceBooking: "/{bookingId}\n<<Path>>"
+ResourceBooking ..> RepresentationBooking: "<<use>>"
+
+@enduml
