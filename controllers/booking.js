@@ -13,7 +13,7 @@ exports.getAllBooking=async (req,res,next)=>{
     if(req.user.role!=='admin'){
         query=Booking.find({user:req.user.id}).populate({
             path:'hotel',
-            select:'name tel'
+            select:'name address tel'
         });
     }
     else{ //admin
@@ -21,13 +21,13 @@ exports.getAllBooking=async (req,res,next)=>{
             console.log(req.params.hotelId);
             query=Booking.find({hotel:req.params.hotelId}).populate({
                 path:'hotel',
-                select:'name tel'
+                select:'name address tel'
             });
         }
         else{
             query=Booking.find().populate({
                 path:'hotel',
-                select:'name tel'
+                select:'name address tel'
 
             });
         }
@@ -54,7 +54,7 @@ exports.getBooking=async (req,res,next)=>{
     try{
         const booking=await Booking.findById(req.params.id).populate({
             path:'hotel',
-            select:'name tel'
+            select:'name address tel'
         });
 
         if(!booking){
