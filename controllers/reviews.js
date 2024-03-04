@@ -10,7 +10,7 @@ exports.getReviews=async(req,res,next) => {
 
     let query
     if(req.params.hotelId){
-        query=Review.find({hospital:req.params.hotelId})
+        query=Review.find({hotel:req.params.hotelId})
         .populate({
             path:'hotel',
             select:'-_id name'
