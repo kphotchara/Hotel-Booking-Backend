@@ -14,7 +14,7 @@ exports.getHotels=async(req,res,next) => {
         let queryStr = JSON.stringify(reqQuery);
         queryStr=queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g,match=>`$${match}`);
         
-        query = Hotel.find(JSON.parse(queryStr)).populate('appointments');
+        query = Hotel.find(JSON.parse(queryStr)).populate('booking');
         
         //console.log(req.query);
         
@@ -59,6 +59,7 @@ exports.getHotels=async(req,res,next) => {
         });
     } catch(err){
         res.status(400).json({success:false});
+        
     }
 
 };
