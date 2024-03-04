@@ -1,5 +1,5 @@
 const Review=require('../models/Review');
-const Hotel=require('../models/Hotels');
+const Hotel=require('../models/Hotel');
 const User=require('../models/User');
 const Booking=require('../models/Booking');
 

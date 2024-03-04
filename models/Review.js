@@ -1,6 +1,6 @@
 
 const mongoose=require('mongoose');
-const Hotel = require('./Hotels');
+const Hotel = require('./Hotel');
 
 const ReviewSchema=new mongoose.Schema({
     user:{
