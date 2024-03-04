@@ -1,20 +1,27 @@
+
 const Hotel = require('../models/Hotel');
 
 
 exports.getHotels=async(req,res,next) => {
 
     let query
+
         const reqQuery = {...req.query};
 
         const removeFields = ['select','sort','page','limit'];
         removeFields.forEach(param=>delete reqQuery[param]);
         
-        console.log(reqQuery);
+
+        //console.log(reqQuery);
+
 
         let queryStr = JSON.stringify(reqQuery);
         queryStr=queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g,match=>`$${match}`);
         
-        query = Hotel.find(JSON.parse(queryStr)).populate('booking');
+
+        query = Hotel.find(JSON.parse(queryStr))
+        //query = Hotel.find(JSON.parse(queryStr)).populate('booking');
+
         
         //console.log(req.query);
         
@@ -23,14 +30,16 @@ exports.getHotels=async(req,res,next) => {
             const fields=req.query.select.split(',').join(' ');
             query=query.select(fields);
         }
-    
+
         //Sort
         if(req.query.sort){
             const sortBy=req.query.sort.split(',').join(' ');
             query=query.sort(sortBy);
         }
         else{
-            query=query.sort('name');
+
+            query=query.sort({ rating: -1 });
+
         }
         const page=parseInt(req.query.page,10) || 1;
         const limit=parseInt(req.query.limit,10) || 25;
@@ -39,10 +48,12 @@ exports.getHotels=async(req,res,next) => {
         
 
     try{
+
         const total=await Hotel.countDocuments();
         query=query.skip(startIndex).limit(limit);
 
         const hotels = await query;
+
         const pagination={};
         if(endIndex<total){
             pagination.next={page:page+1,limit}
@@ -72,30 +83,26 @@ exports.getHotel=async(req,res,next) => {
         }
         res.status(200).json({
             success:true,
-            data:hotel
+            data:hotel,
+            count:hospitals.length,
+            pagination,
+            data:hospitals
         });
     } catch(err){
         res.status(400).json({success:false});
     }
 
 };
-exports.createHotel=async(req,res,next) => {
-    //console.log(req.body);
-    // res.status(200).json({success:true,msg:'Create new hospitals'});
-    const hotel =await Hotel.create(req.body);
-    res.status(201).json({
-        success:true,
-        data:hotel
-    });
-    
-};
 
-exports.updateHotel=async(req,res,next) => {
-
+//@desc     Get a hotel
+//@route    GET /api/v1/hotels/:id
+//@access   Public
+exports.getHotel=async(req,res,next) => {
     try{
-        const hotel = await Hotel.findByIdAndUpdate(req.params.id,req.body,{
-            new : true,
-            runValidators: true
+        //const hotel = await Hotel.findById(req.params.id).populate('booking');
+        const hotel = await Hotel.findById(req.params.id).populate({
+            path:'reviews',
+            select:'-_id -hotel rating description'
         });
         if(!hotel){
             res.status(400).json({success:false});
@@ -108,7 +115,45 @@ exports.updateHotel=async(req,res,next) => {
     } catch(err){
         res.status(400).json({success:false});
     }
+
 };
+
+exports.createHotel=async(req,res,next) => {
+    //console.log(req.body);
+    // res.status(200).json({success:true,msg:'Create new hospitals'});
+    const hotel =await Hotel.create(req.body);
+    res.status(201).json({
+        success:true,
+        data:hotel
+
+    });
+    
+};
+
+
+exports.updateHotel=async(req,res,next) => {
+
+    try{
+        const hotel = await Hotel.findByIdAndUpdate(req.params.id,req.body,{
+            new : true,
+            runValidators: true
+        });
+        if(!hotel){
+
+            res.status(400).json({success:false});
+        }
+
+        res.status(200).json({
+            success:true,
+
+            data:hotel
+
+        });
+    } catch(err){
+        res.status(400).json({success:false});
+    }
+};
+
 
 
 exports.deleteHotel=async(req,res,next)=>{
@@ -120,9 +165,11 @@ exports.deleteHotel=async(req,res,next)=>{
         }
 
         await hotel.deleteOne();
+
         res.status(200).json({success:true,data:{}});
     }
     catch(err){
         res.status(400).json({success:false});
     }
 };
+

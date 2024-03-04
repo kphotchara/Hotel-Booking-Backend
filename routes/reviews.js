@@ -7,4 +7,6 @@ const { updateBooking } = require('../controllers/booking');
 
 router.route('/').get(getReviews).post(protect,authorize('user'),addReview);
 router.route('/:id').get(getReview).put(protect,authorize('user'),updateReview).delete(protect,authorize('user','admin'),deleteReview);
+
 module.exports=router;
+

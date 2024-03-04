@@ -12,10 +12,13 @@ exports.register=async(req,res,next)=>{
             role
         });
         //create token
-        //const token = user.getSignedJwtToken();
-        //res.status(200).json({success:true,token});
-        sendTokenResponse(user,200,res);
-    }
+
+        const token = user.getSignedJwtToken();
+        res.status(200).json({success:true,username,token});
+
+        //sendTokenResponse(user,200,res);
+    } 
+
     catch(err){
         res.status(400).json({success:false});
         console.log(err.stack);

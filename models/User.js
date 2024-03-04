@@ -17,7 +17,9 @@ const UserSchema=new mongoose.Schema({
     tel:{
         type : String,
         required : [true, 'Please add a telephone number'],
-        maxlength : 10,
+
+        maxlength : 12,
+
         unique: true
     },
     email:{
