@@ -2,9 +2,11 @@ const User= require('../models/User');
 
 exports.register=async(req,res,next)=>{
     try{
-        const {name,email,password,role} = req.body;
-        const user=await User.create({
+        const {username,name,tel,email,password, role}=req.body;
+        const user = await User.create({
+            username,
             name,
+            tel,
             email,
             password,
             role
@@ -22,15 +24,15 @@ exports.register=async(req,res,next)=>{
 
 exports.login=async (req,res,next)=>{
     try{
-        const {email,password}=req.body;
+        const {username,password} = req.body;
     
         //Validate email and password
-        if(!email || !password){
-            return res.status(400).json({success:false,msg:'Please provide an email and password'});
+        if(!username||!password){
+            return res.status(400).json({success:false,msg:'Please provide a username and password'});
         }
     
         //Check for users
-        const user=await User.findOne({email}).select('+password');
+        const user=await User.findOne({username}).select('+password');
         if(!user){
             return res.status(400).json({success:false,msg:'Invalid credentials'});
         }
@@ -67,7 +69,7 @@ const sendTokenResponse=(user,statusCode,res)=>{
         success : true,
         token
     })
-}
+};
 
 exports.getMe=async(req,res,next)=>{
     const user=await User.findById(req.user.id);

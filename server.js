@@ -30,13 +30,13 @@ app.use(limiter);
 app.use(hpp());
 app.use(cors());
 
-// const hospitals =require('./routes/hospitals');
-// const auth = require('./routes/auth');
-// const appointments = require('./routes/appointments')
+const hotels =require('./routes/hotels');
+const auth = require('./routes/auth');
+const booking = require('./routes/booking')
 
-// app.use('/api/v1/hospitals',hospitals);
-// app.use('/api/v1/auth',auth);
-// app.use('/api/v1/appointments',appointments);
+app.use('/api/v1/hotels',hotels);
+app.use('/api/v1/auth',auth);
+app.use('/api/v1/booking',booking);
 
 app.get('/', (req,res) => {
     // res.send('<h1>hello from express</h1>');

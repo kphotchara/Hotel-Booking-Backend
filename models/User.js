@@ -3,14 +3,27 @@ const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 
 const UserSchema=new mongoose.Schema({
+    username:{
+        type : String,
+        unique : true,
+        required : [true, 'Please create your username'],
+        minlength : 3,
+        maxlength : 20
+    },
     name:{
         type:String,
         required:[true,'Please add a name']
     },
+    tel:{
+        type : String,
+        required : [true, 'Please add a telephone number'],
+        maxlength : 10,
+        unique: true
+    },
     email:{
         type:String,
         required:[true,'Please add an email'],
-        unique:true,
+        unique: true,
         match:[
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             'Please add a valid email'
@@ -49,5 +62,6 @@ UserSchema.methods.getSignedJwtToken=function(){
 UserSchema.methods.matchPassword=async function(enteredPassword){
     return await bcrypt.compare(enteredPassword,this.password);
 }
+
 
 module.exports=mongoose.model('User',UserSchema);

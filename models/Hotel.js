@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const HospitalSchema = new mongoose.Schema({
+const HotelSchema = new mongoose.Schema({
     name:{
         type: String,
         required: [true,'Please add a name'],
@@ -27,26 +27,22 @@ const HospitalSchema = new mongoose.Schema({
     },
     tel:{
         type: String
-    },
-    region:{
-        type: String,
-        required: [true,'Please add a regoin']
     }
 },{
     toJSON:{virtuals:true},
     toObject:{virtuals:true}
 });
 
-HospitalSchema.pre('deleteOne',{document:true,query:false},async function(next){
-    console.log(`Appointment Being removed from hospital ${this._id}`);
-    await this.model('Appointment').deleteMany({hospital:this._id});
-    next();
-});
+// HotelSchema.pre('deleteOne',{document:true,query:false},async function(next){
+//     console.log(`booking Being removed from hotel ${this._id}`);
+//     await this.model('Booking').deleteMany({booking:this._id});
+//     next();
+// });
 
-HospitalSchema.virtual('appointments',{
-    ref:'Appointment',
+HotelSchema.virtual('booking',{
+    ref:'Booking',
     localField:'_id',
-    foreignField:'hospital',
+    foreignField:'hotel',
     justOne:false
 });
-module.exports=mongoose.model('Hospital',HospitalSchema);
+module.exports=mongoose.model('Hotel',HotelSchema);
