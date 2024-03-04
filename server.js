@@ -33,10 +33,12 @@ app.use(cors());
 const hotels =require('./routes/hotels');
 const auth = require('./routes/auth');
 const booking = require('./routes/booking')
+const reviews = require('./routes/reviews');
 
 app.use('/api/v1/hotels',hotels);
 app.use('/api/v1/auth',auth);
 app.use('/api/v1/booking',booking);
+app.use('/api/v1/reviews',reviews);
 
 app.get('/', (req,res) => {
     // res.send('<h1>hello from express</h1>');
@@ -76,4 +78,3 @@ const swaggerOptions={
 
 const swaggerDocs=swaggerJsDoc(swaggerOptions);
 app.use('/api-docs',swaggerUI.serve,swaggerUI.setup(swaggerDocs));
-
