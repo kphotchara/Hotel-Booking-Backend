@@ -52,7 +52,7 @@ app.get('/', (req,res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT,console.log('Server running in',process.env.NODE_ENV,'on'+ process.env.HOST+' :'+PORT));
+const server = app.listen(PORT,console.log('Server running in',process.env.NODE_ENV,'on'+ process.env.HOST+':'+PORT));
 
 process.on('unhandledRejection',(err,promise)=>{
     console.log(`Error: ${err.message}`);
