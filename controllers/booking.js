@@ -19,14 +19,20 @@ exports.getAllBooking=async (req,res,next)=>{
             query=Booking.find({hotel:req.params.hotelId}).populate({
                 path:'hotel',
                 select:'name tel'
-            });
+            }).populate({
+                path:'user',
+                select:'-_id name'
+            });;
         }
         else{
             query=Booking.find().populate({
                 path:'hotel',
                 select:'name tel'
 
-            });
+            }).populate({
+                path:'user',
+                select:'-_id name'
+            });;
         }
     }
 
